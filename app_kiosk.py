@@ -7,21 +7,23 @@ import ast
 import re
 import threading
 import requests
-import Siosk.package.download as download
+import Siosk_en.package.download as download
 from auto.clear_terminal import clear_terminal
-from Siosk.package.TTS import TextToSpeech
-from Siosk.package.scan import find_process_by_port_Voice
-from Siosk.package.model import API
+from Siosk_en.package.TTS import TextToSpeech
+from Siosk_en.package.scan import find_process_by_port_Voice
+from Siosk_en.package.model import API
 import asyncio
 from pydub import AudioSegment
 from pydub.playback import play
 
-current_working_directory = os.path.abspath(".") + "/SioskUI"
+current_working_directory = os.path.abspath(".") + "/SioskUI_en"
 drinks = ["Coffee", "Smoothe", "Beverage", "Tea", "Ade"]
 ip_store = []
 
 class UI:
     def __init__(self) -> None:
+        save_dir = "Siosk_en/package/" # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
+        download.download_file(file="conversation_en.json", save_dir=save_dir) # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
         self.TextToSpeech = TextToSpeech()
         self.sound = AudioSegment.from_file("assets/audio/click.wav", format="wav")
         while True:
@@ -82,9 +84,7 @@ class UI:
                 break
             else:
                 print("Please enter keyword Only E or K")
-        
-        save_dir = "Siosk/package/" # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
-        download.download_file(file="conversation.json", save_dir=save_dir) # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
+
         ip_store.append(ip_address)
 
         if ip_address == "127.0.0.1":
@@ -670,7 +670,7 @@ class UI:
 
             menu_array = []
             amount_array = []
-            file_path = "Siosk/package/log/logger.log"
+            file_path = "Siosk_en/package/log/logger.log"
             def checker():
                 def counting():
                     file = open(file_path, 'r', encoding='utf-8')
@@ -727,7 +727,7 @@ class UI:
                         print("Order Canceled: " + bool_data)
                 elif flag == '7':
                     submit_audio_version()
-                    with open('Siosk/package/log/logger.log', 'w', encoding='utf-8') as file:
+                    with open('Siosk_en/package/log/logger.log', 'w', encoding='utf-8') as file:
                         pass
                     return False
                 elif flag == 'Gemini':
