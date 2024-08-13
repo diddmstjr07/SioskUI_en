@@ -12,9 +12,9 @@ from auto.clear_terminal import clear_terminal
 from Siosk_en.package.TTS import TextToSpeech
 from Siosk_en.package.scan import find_process_by_port_Voice
 from Siosk_en.package.model import API
+from auto.voice import play_wav
 import asyncio
-from pydub import AudioSegment
-from pydub.playback import play
+import ctypes
 
 current_working_directory = os.path.abspath(".") + "/SioskUI_en"
 drinks = ["Coffee", "Smoothe", "Beverage", "Tea", "Ade"]
@@ -25,7 +25,7 @@ class UI:
         save_dir = "Siosk_en/package/" # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
         download.download_file(file="conversation_en.json", save_dir=save_dir) # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
         self.TextToSpeech = TextToSpeech()
-        self.sound = AudioSegment.from_file("assets/audio/click.wav", format="wav")
+        self.sound = "assets/audio/click.wav"
         while True:
             bool = input("Korean or English (한국어, 영어)? (K/E): ")
             if bool == "K" or bool == "k" or bool == "한국어" or bool == "Korean" or bool == "korean":
@@ -122,40 +122,42 @@ class UI:
         key_data = []
         data_arrange = []
         drink_items = [ 
-            (f"coffee/iceamericano.png", "아이스 아메리카노\n3000원", "Coffee"),
-            (f"coffee/younyu_latte.png", "연유 라테\n3000원", None),
-            (f"coffee/kapuchino.png", "카푸치노\n3000원", None),
-            (f"coffee/Hazelnut_Latte.png", "헤이즐넛 라테\n3000원", None),
-            (f"coffee/Hazelnut_Americano.png", "헤이즐넛 아메리카노\n3000원", None),
-            (f"coffee/Coldbrew_Latte.png", "콜드브루 라테\n3000원", None),
-            (f"coffee/cold_brew_original.png", "콜드브루\n3000원", None),
-            (f"coffee/Caramel_Macchiato.png", "카라멜 마키아또\n3000원", None),
-            (f"coffee/Caffe_Mocha.png", "카페 모카\n3000원", None),
-            (f"frappe/Mint_Frappe.png", "민트 프라페\n3000원", None),
-            (f"frappe/Green_Tea_Frappe.png", "녹차 프라페\n3000원", "Smoothe"),
-            (f"frappe/Unicorn_Frappe.png", "유니콘 프라페\n3000원", None),
-            (f"pongcrush/Banana_Pongcrush.png", "바나나 퐁크러쉬\n3000원", "Beverage"),
-            (f"pongcrush/Chocolate_Honey_Pong_Crush.png", "초콜릿허니 퐁크러쉬\n3000원", None),
-            (f"pongcrush/Choux_Cream_Honey_Pong_Crush.png", "슈크림허니 퐁크러쉬\n3000원", None),
-            (f"pongcrush/Plain_Pongcrush.png", "플래인 퐁크러쉬\n3000원", None),
-            (f"pongcrush/Strawberry_pongcrush.png", "딸기 퐁크러쉬\n3000원", None),
-            (f"pongcrush/Strawberry_Cookie_Frappe.png", "딸기쿠키 프라페\n3000원", None),
-            (f"smoothie/Mango_Yogurt_Smoothie.png", "망고요거트 스무디\n3000원", None),
-            (f"smoothie/Plain_Yogurt_Smoothie.png", "플래인요거트 스무디\n3000원", None),
-            (f"smoothie/Strawberry_Yogurt_Smoothie.png", "딸기요거트 스무디\n3000원", None),
-            (f"ade/Blue_Lemon_Ade.png", "블루 레몬에이드\n3000원", "Ade"),
-            (f"ade/Cherry_Coke.png", "체리콕\n3000원", None),
-            (f"ade/Grapefruit_Ade.png", "자몽 에이드\n3000원", None),
-            (f"ade/Lemon_Ade.png", "레몬 에이드\n3000원", None),
-            (f"ade/Lime_Mojito.png", "라임 모히또\n3000원", None),
-            (f"ade/MEGA_Ade.png", "메가 에이드\n3000원", None),
-            (f"tea/Hot_lemon_tea.png", "레몬차\n3000원", None),
-            (f"tea/Applecitron_Tea.png", "사과 유자차\n3000원", "Tea"),
-            (f"tea/Chamomile.png", "케모마일 차\n3000원", None),
-            (f"tea/Green_Tea.png", "녹차\n3000원", None),
-            (f"tea/Earl_Grey.png", "얼그레이\n3000원", None),
-            (f"tea/Hot_Grapefruit_tea.png", "자몽차\n3000원", None),
+            (f"coffee/iceamericano.png", "iced Americano\n4 dollar", "Coffee"),
+            (f"coffee/kapuchino.png", "hot Americano\n4 dollar", "Coffee"),
+            (f"coffee/younyu_latte.png", "sweetened latte\n4 dollar", None),
+            (f"coffee/kapuchino.png", "cappuccino\n4 dollar", None),
+            (f"coffee/Hazelnut_Latte.png", "hazelnut latte\n4 dollar", None),
+            (f"coffee/Hazelnut_Americano.png", "hazelnut Americano\n4 dollar", None),
+            (f"coffee/Coldbrew_Latte.png", "cold brew latte\n4 dollar", None),
+            (f"coffee/cold_brew_original.png", "cold brew\n4 dollar", None),
+            (f"coffee/Caramel_Macchiato.png", "caramel macchiato\n4 dollar", None),
+            (f"coffee/Caffe_Mocha.png", "cafe mocha\n4 dollar", None),
+            (f"frappe/Mint_Frappe.png", "mint frappe\n4 dollar", None),
+            (f"frappe/Green_Tea_Frappe.png", "green tea frappe\n4 dollar", "Smoothe"),
+            (f"frappe/Unicorn_Frappe.png", "unicorn frappe\n4 dollar", None),
+            (f"pongcrush/Banana_Pongcrush.png", "banana funk crush\n4 dollar", "Beverage"),
+            (f"pongcrush/Chocolate_Honey_Pong_Crush.png", "chocolate honey funk crush\n4 dollar", None),
+            (f"pongcrush/Choux_Cream_Honey_Pong_Crush.png", "cream honey funk crush\n4 dollar", None),
+            (f"pongcrush/Plain_Pongcrush.png", "plain funk crush\n4 dollar", None),
+            (f"pongcrush/Strawberry_pongcrush.png", "strawberry funk crush\n4 dollar", None),
+            (f"pongcrush/Strawberry_Cookie_Frappe.png", "strawberry cookie frappe\n4 dollar", None),
+            (f"smoothie/Mango_Yogurt_Smoothie.png", "mango yogurt smoothie\n4 dollar", None),
+            (f"smoothie/Plain_Yogurt_Smoothie.png", "plain yogurt smoothie\n4 dollar", None),
+            (f"smoothie/Strawberry_Yogurt_Smoothie.png", "strawberry yogurt smoothie\n4 dollar", None),
+            (f"ade/Blue_Lemon_Ade.png", "blue lemon ade\n4 dollar", "Ade"),
+            (f"ade/Cherry_Coke.png", "cherry coke\n4 dollar", None),
+            (f"ade/Grapefruit_Ade.png", "grapefruit ade\n4 dollar", None),
+            (f"ade/Lemon_Ade.png", "lemon ade\n4 dollar", None),
+            (f"ade/Lime_Mojito.png", "lime mojito\n4 dollar", None),
+            (f"ade/MEGA_Ade.png", "mega ade\n4 dollar", None),
+            (f"tea/Hot_lemon_tea.png", "lemon tea\n4 dollar", None),
+            (f"tea/Applecitron_Tea.png", "apple yuzu tea\n4 dollar", "Tea"),
+            (f"tea/Chamomile.png", "chamomile tea\n4 dollar", None),
+            (f"tea/Green_Tea.png", "green tea\n4 dollar", None),
+            (f"tea/Earl_Grey.png", "Earl Grey\n4 dollar", None),
+            (f"tea/Hot_Grapefruit_tea.png", "grapefruit tea\n4 dollar", None),
         ]
+
         page.title = "시오스크"
         page.window_width = 700
         page.window_height = 1600
@@ -421,7 +423,7 @@ class UI:
                             result = str(data).split(' ')[0] 
                         else:
                             result = str(data).split(' ')[0] + " " + str(data).split(' ')[-1]
-                        pattern = r"(.+)\s(\d+)원"
+                        pattern = r"(.+)\s(\d+) dollar"
                         match = re.match(pattern, str(select_drink))
                         if match:
                             item = match.group(1)
@@ -474,7 +476,7 @@ class UI:
                     MENU.append(list_result)
                     order_list.update()
                 sum_dataa = ft.Text(
-                    value="  " + str(total) + "원",
+                    value="  " + str(total) + " dollar",
                     size=text_size,
                     color=text_color,
                     font_family="NanumGothic",
@@ -713,14 +715,27 @@ class UI:
                 if flag == '3':
                     menu_array.append(classified)
                 elif flag == '4':
-                    amount_array.append(classified)
+                    if classified == "one":
+                        amount_array.append("1")
+                    if classified == "two":
+                        amount_array.append("2")
+                    if classified == "three":
+                        amount_array.append("3")
+                    if classified == "four":
+                        amount_array.append("4")
+                    if classified == "five":
+                        amount_array.append("5")
+                    if classified == "six":
+                        amount_array.append("6")
                 elif flag == '6':
                     bool_data = classified
                     if bool_data == 'True':
                         print("Audio selected menu: " + menu_array[0])
                         print("Audio selected amount: " + amount_array[0])
                         print("Audio selected bool data: " + bool_data)
+                        print(menu_array, amount_array)
                         automatic_updater(menu=menu_array[0], amount=amount_array[0])
+                        print(menu_array, amount_array)
                         menu_array.clear()
                         amount_array.clear()
                     elif bool_data == 'False':
@@ -747,13 +762,13 @@ class UI:
             text_weight = ft.FontWeight.W_900
 
             text_tuples = [
-                ("추천", rnd),
-                ("커피", lambda: "Coffee"),
-                ("스무디\n프라페", lambda: "Smoothe"),
-                ("음료", lambda: "Beverage"),
-                ("에이드", lambda: "Ade"),
-                ("차(Tea)", lambda: "Tea"),
-                ("디저트", None)
+                ("Recommand", rnd),
+                ("Coffee", lambda: "Coffee"),
+                ("Smoothe\nFrappe", lambda: "Smoothe"),
+                ("Beverage", lambda: "Beverage"),
+                ("Ade", lambda: "Ade"),
+                ("Tea", lambda: "Tea"),
+                ("Dessert", None)
             ]
 
             text_array = [
@@ -795,7 +810,7 @@ class UI:
                                     ),
                                     ft.Container(
                                         ft.Text(
-                                            "처음으로",
+                                            "Home",
                                             size=25,
                                             color=text_color,
                                             font_family="NanumGothic",
@@ -822,8 +837,20 @@ class UI:
                 for menu in range(len(Menu)):
                     # print(MENU[menu])
                     select_drink = ast.literal_eval(str(Menu[menu])[5:])['value']
-                    result = str(select_drink).split(' ')[-2]
-                    fee += int(result[:-1])
+                    print(select_drink)
+                    result = str(select_drink).split(' ')[-1][0]
+                    fee += int(result)
+                return fee
+            
+            def fee_sum_data_auto():
+                fee = 0
+                for menu in range(len(Menu)):
+                    # print(MENU[menu])
+                    select_drink = ast.literal_eval(str(Menu[menu])[5:])['value']
+                    print(select_drink)
+                    result = str(select_drink).split(' ')[-1][0]
+                    fee += int(result)
+                print(fee)
                 return fee
             
             def check_duplicated():
@@ -837,7 +864,7 @@ class UI:
                             result = str(data).split(' ')[0] 
                         else:
                             result = str(data).split(' ')[0] + " " + str(data).split(' ')[-1]
-                        pattern = r"(.+)\s(\d+)원"
+                        pattern = r"(.+)\s(\d+)\$"
                         match = re.match(pattern, str(select_drink))
                         if match:
                             item = match.group(1)
@@ -852,7 +879,35 @@ class UI:
                                 if updated == "":
                                     menu_data = f"{item} | 1 | {str(match.group(0).split(item)[1])[1:]}"
                                     amount_menus.append(menu_data)
-                print(amount_menus)
+                store_getting_lowdata(0, amount_menus) # 데이터를 삽입하도록 호출 -> 시오스크
+                return amount_menus
+            
+            def check_duplicated_auto():
+                amount_menus = []  
+                for menu in range(len(Menu)):
+                    updated = ""                                                                                                                                     
+                    for drink_item in drink_items:
+                        select_drink = ast.literal_eval(str(Menu[menu])[5:])['value']
+                        data = str(drink_item[1]).split("\n")[0]
+                        if str(data).split(' ')[0] == str(data).split(' ')[-1]:
+                            result = str(data).split(' ')[0] 
+                        else:
+                            result = str(data).split(' ')[0] + " " + str(data).split(' ')[-1]
+                        pattern = r"(.+)\s(\d+)\$"
+                        match = re.match(pattern, str(select_drink))
+                        if match:
+                            item = match.group(1)
+                            if result == item:
+                                for index, val in enumerate(amount_menus):
+                                    raw_data = str(val).split(" | ")[0]
+                                    cal_data = str(val).split(" | ")[1]
+                                    if raw_data == item:
+                                        amount_menus[index] = f"{item} | {int(cal_data) + 1} | {str(match.group(0).split(item)[1])[1:]}"
+                                        key_data.append(item)
+                                        updated += "1"
+                                if updated == "":
+                                    menu_data = f"{item} | 1 | {str(match.group(0).split(item)[1])[1:]}"
+                                    amount_menus.append(menu_data)
                 store_getting_lowdata(0, amount_menus) # 데이터를 삽입하도록 호출 -> 시오스크
                 return amount_menus
             
@@ -861,8 +916,7 @@ class UI:
                 container = e.control.data # 클릭한 부분의 Container 데이터 가지고 오기
                 datas = str(container).split('\n') # 줄 나눔하기 메뉴랑 가격이랑 다른줄로 나누어져 있기때문에
                 texture = "" # 가격이랑 상품명을 한줄로 만들어서 textture 변수에 문자열로 저장해주기
-                for data in range(len(datas)):
-                    texture += str(datas[data] + " ")
+                texture = f"{datas[0]} {str(datas[1]).split(' ')[0]}$"
                 order_menu = ft.Text(
                     value=texture,
                     size="30",
@@ -890,7 +944,7 @@ class UI:
                     MENU.append(list_result)
                     order_list.update()
                 sum_dataa = ft.Text(
-                    value="  " + str(total) + "원",
+                    value="  " + str(total) + " dollar",
                     size="30",
                     color=text_color,
                     font_family="NanumGothic",
@@ -914,20 +968,18 @@ class UI:
                 else:
                     price_re = expanded_drink_prices.get(drink_name)
                     if price_re:
-                        print(price_re)
                         return price_re
                     else:
-                        print(expanded_drink_prices)
                         return None
 
             def automatic_updater(menu, amount):
-                price = extracting_fee(menu)
+                drink_name, price = extracting_fee(menu)
                 # print(price)
                 # print(menu)
-                texture = price[0] + " " + price[1] + " "
+                texture = f"{drink_name} {price.split(' ')[0]}$" 
                 '''
-                text {'value': '아이스 아메리카노 3000원 ', 'fontfamily': 'NanumGothic', 'size': '30', 'weight': 'w900', 'color': '#55443d'} -> 일반 클릭
-                text {'value': '아이스 아메리카노 3000원', 'fontfamily': 'NanumGothic', 'size': 15, 'weight': 'w900', 'color': '#55443d'} -> 음성 클릭
+                text {'value': '아이스 아메리카노 4 dollar ', 'fontfamily': 'NanumGothic', 'size': '30', 'weight': 'w900', 'color': '#55443d'} -> 일반 클릭
+                text {'value': '아이스 아메리카노 4 dollar', 'fontfamily': 'NanumGothic', 'size': 15, 'weight': 'w900', 'color': '#55443d'} -> 음성 클릭
                 '''
                 for _ in range(int(amount)):
                     order_menu = ft.Text(
@@ -938,8 +990,9 @@ class UI:
                         weight=text_weight
                     )
                     Menu.append(order_menu)
-                total = fee_sum_data()
-                amount_orders = check_duplicated()
+                print(Menu)
+                total = fee_sum_data_auto()
+                amount_orders = check_duplicated_auto()
                 order_list.clean()
                 for amount_order in range(len(amount_orders)):
                     data_str = str(amount_orders[amount_order]).split(" | ")[0]
@@ -957,7 +1010,7 @@ class UI:
                     MENU.append(list_result)
                     order_list.update()
                 sum_dataa = ft.Text(
-                    value="  " + str(total) + "원",
+                    value=" " + str(total) + " dollar",
                     size="30",
                     color=text_color,
                     font_family="NanumGothic",
@@ -965,7 +1018,7 @@ class UI:
                 )
                 sum.controls = [sum_dataa] 
                 sum.update()
-                play(self.sound)
+                play_wav(self.sound)
                 # print(f'Clicked on: {container}')
 
             def click(env):
@@ -998,7 +1051,7 @@ class UI:
 
             def submit_audio_version(): # e 값을 받아서 open_dlg_model을 호출하자 -> Siosk에 대해서
                 page.go('/from_siosk_order') # 이부분은 결제하기를 눌렀을때 나오는 페이지를 뜻함
-                play(self.sound)
+                play_wav(self.sound)
 
             def create_menu_item(image, text, key):
                 container = ft.Container(
@@ -1078,7 +1131,7 @@ class UI:
                         ),
                         ft.Container(
                             ft.Text(
-                                "결제하기",
+                                "Payment",
                                 size=40,
                                 color=text_color,
                                 font_family="NanumGothic",
@@ -1383,7 +1436,7 @@ class UI:
                 return elements
             
             money_list, money_sum = total_amount()
-            money_sum = "{:,}원".format(money_sum)
+            money_sum = "{:,} dollar".format(money_sum)
             elements_array = creating_containers()
             text_color = "#55443d"
             text_weight = ft.FontWeight.W_900
@@ -1409,7 +1462,7 @@ class UI:
                                         [
                                             ft.Container(
                                                 ft.Text(
-                                                    "주문을 확인해주세요.",
+                                                    "Confirm an order.",
                                                     size=35,
                                                     text_align=ft.TextAlign.CENTER,
                                                     color=ft.colors.BLACK,
@@ -1443,7 +1496,7 @@ class UI:
                                                 ft.Row(
                                                     [
                                                         ft.Text(
-                                                            f"총 금액:",
+                                                            f"Sum:",
                                                             size=40,
                                                             color=text_color,
                                                             font_family="NanumGothic",
@@ -1484,7 +1537,7 @@ class UI:
                                             ),
                                             ft.Container(
                                                 ft.Text(
-                                                    "결제하기",
+                                                    "Payment",
                                                     size=40,
                                                     color=text_color,
                                                     font_family="NanumGothic",
@@ -1534,13 +1587,13 @@ class UI:
                     amount = str(data_arrange[0][0]).split(' | ')[1]
                     data_arrange.clear()
                     temp_fake_array = []
-                    temp_fake_array.append(f'카페 모카 | {int(amount) + 1} | 3000원')
+                    temp_fake_array.append(f'카페 모카 | {int(amount) + 1} | 4 dollar')
                     data_arrange.append(temp_fake_array)
                     print("data insulting")
                     print(data_arrange)
                 except IndexError:
                     temp_fake_array = []
-                    temp_fake_array.append(f'카페 모카 | {e} | 3000원')
+                    temp_fake_array.append(f'카페 모카 | {e} | 4 dollar')
                     data_arrange.append(temp_fake_array)
                     print("data insulting")
                     print(data_arrange)
