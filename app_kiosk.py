@@ -1,3 +1,4 @@
+
 import flet as ft
 from flet import View, RouteChangeEvent
 import os
@@ -13,8 +14,6 @@ from Siosk_en.package.TTS import TextToSpeech
 from Siosk_en.package.scan import find_process_by_port_Voice
 from Siosk_en.package.model import API
 from auto.voice import play_wav
-import asyncio
-import ctypes
 
 current_working_directory = os.path.abspath(".") + "/SioskUI_en"
 drinks = ["Coffee", "Smoothe", "Beverage", "Tea", "Ade"]
@@ -26,65 +25,7 @@ class UI:
         download.download_file(file="conversation_en.json", save_dir=save_dir) # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
         self.TextToSpeech = TextToSpeech()
         self.sound = "assets/audio/click.wav"
-        while True:
-            bool = input("Korean or English (한국어, 영어)? (K/E): ")
-            if bool == "K" or bool == "k" or bool == "한국어" or bool == "Korean" or bool == "korean":
-                os.system(clear_terminal())
-                while True:
-                    bool = input("시오스크 서버가(SioskServer) 본인 PC에서 실행중인가요? (Y/N): ")
-                    if bool == "Y" or bool == "y" or bool == "Yes" or bool == "y":
-                        ip_address = "127.0.0.1"
-                        os.system(clear_terminal())
-                        break
-                    elif bool == "N" or bool == "n" or bool == "No" or bool == "no":
-                        os.system(clear_terminal())
-                        ip_address = input('\033[91m' + "[!중요!] " + '\033[0m' + "시오스크서버와 클라이언트 코드가 동일한 네트워크에 접속되어있어야합니다(와이파이)\n시오스크서버가(SioskServer) 실행중인 아이피 주소를 입력해주십시오. \n\nWindows인 경우, ipconfig \nMac OS인 경우, ifconfig\n\n새창 터미널에 입력하여 나온 192.168~~ 아이피 주소를 입력해주세요: ")
-                        break
-                    else:
-                        print("Y 또는 N만 입력해주십시오")
-                while True:
-                    bool = input("TTS 오디오 초기화를 진행할까요? (Y 입력 권장) (Y/N): ")
-                    if bool == "Y" or bool == "y" or bool == "Yes" or bool == "y":
-                        os.system(clear_terminal())
-                        asyncio.run(self.TextToSpeech.downloading())
-                        break
-                    elif bool == "N" or bool == "n" or bool == "No" or bool == "no":
-                        os.system(clear_terminal())
-                        break
-                    else:
-                        print("Please enter keyword Only Y or N")
-                        os.system(clear_terminal())
-                break
-
-            elif bool == "E" or bool == "e" or bool == "English" or bool == "english" or bool == "영어":
-                os.system(clear_terminal())
-                while True:
-                    bool = input("Is SioskServer is Running on your own PC? (Y/N): ")
-                    if bool == "Y" or bool == "y" or bool == "Yes" or bool == "y":
-                        ip_address = "127.0.0.1"
-                        os.system(clear_terminal())
-                        break
-                    elif bool == "N" or bool == "n" or bool == "No" or bool == "no":
-                        ip_address = input('\033[91m' + "[!IMPORTANT!] " + '\033[0m' + "Your Server and Client must be connected in same Network device (WIFI)\nlease type IP Address SioskServer is running. \n\nIf you Operating System is Windows, type 'ipconfig' in new window termial\nElse if Mac OS or Linux or System included in Uninx, type 'ifconfig' in new window termial\n\nPlease find texture start as 192.168~~ and type: ")
-                        os.system(clear_terminal())
-                        break
-                    else:
-                        print("Please enter keyword Only Y or N")
-                while True:
-                    bool = input("Initializing TTS audio? (Y Recommened) (Y/N): ")
-                    if bool == "Y" or bool == "y" or bool == "Yes" or bool == "y":
-                        os.system(clear_terminal())
-                        asyncio.run(self.TextToSpeech.downloading())
-                        break
-                    elif bool == "N" or bool == "n" or bool == "No" or bool == "no":
-                        os.system(clear_terminal())
-                        break
-                    else:
-                        print("Please enter keyword Only Y or N")
-                break
-            else:
-                print("Please enter keyword Only E or K")
-
+        ip_address = "127.0.0.1"
         ip_store.append(ip_address)
 
         if ip_address == "127.0.0.1":
@@ -159,8 +100,8 @@ class UI:
         ]
 
         page.title = "시오스크"
-        page.window_width = 700
-        page.window_height = 1600
+        page.window_width = 570
+        page.window_height = 850
         # route_history = []
 
         def senior_mode(e):
@@ -175,28 +116,28 @@ class UI:
 
         img0 = ft.Image(
             src=f"{current_working_directory}/assets/images/logo/general.png",
-            width=300,
-            height=300,
+            width=150,
+            height=150,
             fit=ft.ImageFit.CONTAIN,
         )
 
         shadowed_img0 = ft.Container(
             img0,
-            padding=10
+            padding=5
         )
         width_ele = page.window_width
         height_ele = page.window_height
 
         img1 = ft.Image(
             src=f"{current_working_directory}/assets/images/logo/siosk.png",
-            width=300,
-            height=300,
+            width=150,
+            height=150,
             fit=ft.ImageFit.CONTAIN,
         )
 
         shadowed_img1 = ft.Container(
             img1,
-            padding=10
+            padding=5
         )
 
         def store_getting_lowdata(e, low_data):  # 로우 데이터 Insult를 하거나, Gettig(Polling)을 해주는 함수
@@ -228,7 +169,7 @@ class UI:
                     ),
                     ft.Text(
                         "일반주문",
-                        size=40,
+                        size=20,
                         text_align=ft.TextAlign.CENTER,
                         color=ft.colors.BLACK,
                         width=width_ele,
@@ -248,7 +189,7 @@ class UI:
                     ),
                     ft.Text(
                         "노인주문",
-                        size=40,
+                        size=20,
                         text_align=ft.TextAlign.CENTER,
                         color=ft.colors.BLACK,
                         width=width_ele,
@@ -322,7 +263,7 @@ class UI:
                 for _ in range(len(drinks)):
                     key_value = drinks[random.randint(0, len(drinks) - 1)]
                     return key_value
-            text_size = 15
+            text_size = 7.5
             text_color = "#55443d"
             text_weight = ft.FontWeight.W_900
 
@@ -340,12 +281,12 @@ class UI:
                 ft.Container(
                     ft.Text(
                         text,
-                        size="20",
+                        size="10",
                         color=text_color,
                         font_family="NanumGothic",
                         weight=text_weight
                     ),
-                    ft.padding.only(bottom=60),
+                    ft.padding.only(bottom=30),
                     on_click=(lambda e, key=key: orderment.scroll_to(key=key(), duration=1000) if key else None)
                 ) for text, key in text_tuples
             ]
@@ -375,7 +316,7 @@ class UI:
                             ft.Column(
                                 [
                                     ft.Container(
-                                        ft.Icon(name=ft.icons.HOME_ROUNDED, size=40, color=text_color),
+                                        ft.Icon(name=ft.icons.HOME_ROUNDED, size=20, color=text_color),
                                         alignment=ft.alignment.center,
                                         on_click=start_menu_click
                                     ),
@@ -388,7 +329,7 @@ class UI:
                                             weight=text_weight
                                         ),
                                         alignment=ft.alignment.center,
-                                        padding=ft.padding.only(bottom=30)
+                                        padding=ft.padding.only(bottom=15)
                                     )
                                 ]
                             ),
@@ -399,7 +340,7 @@ class UI:
                     expand=True,
                 ),
                 bgcolor='#FFD700',
-                height=3000,
+                height=1500,
                 expand=True
             )
 
@@ -518,14 +459,14 @@ class UI:
                 container = ft.Container(
                     ft.Image(
                         src=f"{current_working_directory}/assets/images/{image}",
-                        width=360,
-                        height=360,
+                        width=180,
+                        height=180,
                     ),
-                    padding=ft.padding.only(top=20),
-                    margin=ft.margin.only(top=20, left=21),
+                    padding=ft.padding.only(top=10),
+                    margin=ft.margin.only(top=10, left=10.5),
                     alignment=ft.alignment.top_left,
-                    width=180,
-                    height=264,
+                    width=90,
+                    height=132,
                     bgcolor='#ffffff',
                     border_radius=ft.border_radius.all(10),
                     shadow=ft.BoxShadow(
@@ -541,13 +482,13 @@ class UI:
                     ft.Container(
                         ft.Text(
                             text,
-                            size=15,
+                            size=7.5,
                             color=text_color,
                             font_family="NanumGothic",
                             weight=text_weight,
                             text_align=ft.alignment.top_left
                         ),
-                        margin=ft.margin.only(left=25)
+                        margin=ft.margin.only(left=12.5)
                     )
                 ])
 
@@ -585,29 +526,29 @@ class UI:
                             height=100,
                             border=ft.border.all(4, color='#aba5a0'),
                             border_radius=ft.border_radius.all(10),
-                            margin=ft.margin.only(left=10),
-                            padding=ft.padding.only(top=15, bottom=15, left=20, right=20)
+                            margin=ft.margin.only(left=5),
+                            padding=ft.padding.only(top=7.5, bottom=7.5, left=10, right=10)
                         ),
                         ft.Container(
                             ft.Text(
                                 "결제하기",
-                                size=25,
+                                size=12.5,
                                 color=text_color,
                                 font_family="NanumGothic",
                                 weight=text_weight,
                             ),
-                            padding=ft.padding.only(top=28, left=44),
-                            width=180,
-                            height=100,
+                            padding=ft.padding.only(top=14, left=22),
+                            width=90,
+                            height=50,
                             border=None,
                             border_radius=ft.border_radius.all(10),
-                            margin=ft.margin.only(right=20),
+                            margin=ft.margin.only(right=10),
                             bgcolor='#FFD700',
                             on_click=submit # 메뉴가 있는지 확인하는 함수에 있어서 e를 받기 위해서는 함수 그대로를 호출해주어야한다.
                         )
                     ]
                 ),
-                height=110,
+                height=55,
                 alignment=ft.alignment.center
             )
 
@@ -626,7 +567,7 @@ class UI:
                             ft.Container(
                                 ft.Column(
                                     [
-                                        ft.Container(height=20),
+                                        ft.Container(height=10),
                                         orderment,
                                         order_box
                                     ],
@@ -634,8 +575,8 @@ class UI:
                                 bgcolor='#fefcf6',
                                 border=None,
                                 alignment=ft.alignment.center,
-                                padding=ft.padding.only(left=40),
-                                width=940
+                                padding=ft.padding.only(left=20),
+                                width=470
                             ),
                         ],
                         spacing=0,
@@ -757,7 +698,7 @@ class UI:
                 for _ in range(len(drinks)):
                     key_value = drinks[random.randint(0, len(drinks) - 1)]
                     return key_value
-            text_size = 15
+            text_size = 7.5
             text_color = "#55443d"
             text_weight = ft.FontWeight.W_900
 
@@ -775,12 +716,12 @@ class UI:
                 ft.Container(
                     ft.Text(
                         text,
-                        size="25",
+                        size="12.5",
                         color=text_color,
                         font_family="NanumGothic",
                         weight=text_weight
                     ),
-                    ft.padding.only(bottom=70),
+                    ft.padding.only(bottom=35),
                     on_click=lambda e, key=key: (orderment.scroll_to(key=key(), duration=1000) if key else None)
                 ) for text, key in text_tuples
             ]
@@ -804,20 +745,20 @@ class UI:
                             ft.Column(
                                 [
                                     ft.Container(
-                                        ft.Icon(name=ft.icons.HOME_ROUNDED, size=60, color=text_color),
+                                        ft.Icon(name=ft.icons.HOME_ROUNDED, size=30, color=text_color),
                                         alignment=ft.alignment.center,
                                         on_click=start_menu_click
                                     ),
                                     ft.Container(
                                         ft.Text(
                                             "Home",
-                                            size=25,
+                                            size=12.5,
                                             color=text_color,
                                             font_family="NanumGothic",
                                             weight=text_weight
                                         ),
                                         alignment=ft.alignment.center,
-                                        padding=ft.padding.only(bottom=30)
+                                        padding=ft.padding.only(bottom=15)
                                     )
                                 ]
                             ),
@@ -828,7 +769,7 @@ class UI:
                     expand=True,
                 ),
                 bgcolor='#e6d5b8',
-                height=3000,
+                height=1500,
                 expand=True
             )
 
@@ -919,7 +860,7 @@ class UI:
                 texture = f"{datas[0]} {str(datas[1]).split(' ')[0]}$"
                 order_menu = ft.Text(
                     value=texture,
-                    size="30",
+                    size="15",
                     color=text_color,
                     font_family="NanumGothic",
                     weight=text_weight
@@ -935,7 +876,7 @@ class UI:
                     # print(data_str)
                     list_result = ft.Text(
                         value=data_str + " " + data_price + f" x {data_int}",
-                        size="30",
+                        size="15",
                         color=text_color,
                         font_family="NanumGothic",
                         weight=text_weight,
@@ -945,7 +886,7 @@ class UI:
                     order_list.update()
                 sum_dataa = ft.Text(
                     value="  " + str(total) + " dollar",
-                    size="30",
+                    size="15",
                     color=text_color,
                     font_family="NanumGothic",
                     weight=text_weight,
@@ -984,7 +925,7 @@ class UI:
                 for _ in range(int(amount)):
                     order_menu = ft.Text(
                         value=texture,
-                        size="30",
+                        size="15",
                         color=text_color,
                         font_family="NanumGothic",
                         weight=text_weight
@@ -1001,7 +942,7 @@ class UI:
                     # print(data_str)
                     list_result = ft.Text(
                         value=data_str + " " + data_price + f" x {data_int}",
-                        size="30",
+                        size="15",
                         color=text_color,
                         font_family="NanumGothic",
                         weight=text_weight,
@@ -1011,7 +952,7 @@ class UI:
                     order_list.update()
                 sum_dataa = ft.Text(
                     value=" " + str(total) + " dollar",
-                    size="30",
+                    size="15",
                     color=text_color,
                     font_family="NanumGothic",
                     weight=text_weight,
@@ -1057,14 +998,14 @@ class UI:
                 container = ft.Container(
                     ft.Image(
                         src=f"{current_working_directory}/assets/images/{image}",
-                        width=750,
-                        height=750,
+                        width=375,
+                        height=375,
                     ),
-                    padding=ft.padding.only(top=20),
-                    margin=ft.margin.only(top=50, left=30),
+                    padding=ft.padding.only(top=10),
+                    margin=ft.margin.only(top=25, left=15),
                     alignment=ft.alignment.top_left,
-                    width=375,
-                    height=550,
+                    width=187.5,
+                    height=275,
                     bgcolor='#ffffff',
                     border_radius=ft.border_radius.all(10),
                     shadow=ft.BoxShadow(
@@ -1080,13 +1021,13 @@ class UI:
                     ft.Container(
                         ft.Text(
                             text,
-                            size=25,
+                            size=12.5,
                             color=text_color,
                             font_family="NanumGothic",
                             weight=text_weight,
                             text_align=ft.alignment.top_left
                         ),
-                        margin=ft.margin.only(top=10, left=25)
+                        margin=ft.margin.only(top=5, left=12.5)
                     )
                 ])
 
@@ -1122,33 +1063,33 @@ class UI:
                     [
                         ft.Container(
                             row_sum,
-                            width=610,
-                            height=180,
+                            width=305,
+                            height=90,
                             border=ft.border.all(4, color='#aba5a0'),
                             border_radius=ft.border_radius.all(20),
-                            margin=ft.margin.only(left=10),
-                            padding=ft.padding.only(top=15, bottom=15, left=20, right=20)
+                            margin=ft.margin.only(left=5),
+                            padding=ft.padding.only(top=7.5, bottom=7.5, left=10, right=10)
                         ),
                         ft.Container(
                             ft.Text(
                                 "Payment",
-                                size=40,
+                                size=20,
                                 color=text_color,
                                 font_family="NanumGothic",
                                 weight=text_weight,
                             ),
-                            padding=ft.padding.only(top=60, left=33),
-                            width=220,
-                            height=180,
+                            padding=ft.padding.only(top=30, left=14.5),
+                            width=110,
+                            height=160,
                             border=None,
                             border_radius=ft.border_radius.all(20),
-                            margin=ft.margin.only(right=20),
+                            margin=ft.margin.only(right=10, bottom=7),
                             bgcolor='#E6D5B8',
                             on_click=submit # 메뉴가 있는지 확인하는 함수에 있어서 e를 받기 위해서는 함수 그대로를 호출해주어야한다.
                         )
                     ]
                 ),
-                height=200,
+                height=100,
                 alignment=ft.alignment.center
             )
 
@@ -1165,7 +1106,7 @@ class UI:
                 def toggle_height():
                     while True:
                         for container in containers:
-                            new_height = random.randint(50, 200)
+                            new_height = random.randint(25, 100)
                             container.height = new_height
                             page.update()  # 이제 안전하게 업데이트 가능
                         time.sleep(0.5)
@@ -1176,8 +1117,8 @@ class UI:
             containers = [
                 ft.Container(
                     bgcolor=ft.colors.BLACK,
-                    width=45,
-                    height=90,
+                    width=22.5,
+                    height=45,
                     border_radius=ft.border_radius.all(30),
                     animate=ft.Animation(600, "easeInOut"),
                 ) for _ in range(4)
@@ -1195,7 +1136,7 @@ class UI:
                 [
                     ft.Container(
                         centered_content,
-                        margin=ft.margin.only(right=60, bottom=10),
+                        margin=ft.margin.only(right=30, bottom=5),
                         expand=True
                     ),
                 ],
@@ -1217,8 +1158,8 @@ class UI:
                                                 controls=containers,
                                                 alignment=ft.MainAxisAlignment.END,
                                             ),
-                                            margin=ft.margin.only(right=60),
-                                            height=230,
+                                            margin=ft.margin.only(right=30),
+                                            height=115,
                                         ),
                                         orderment,
                                         order_box
@@ -1227,8 +1168,8 @@ class UI:
                                 bgcolor='#fefcf6',
                                 border=None,
                                 alignment=ft.alignment.center,
-                                padding=ft.padding.only(left=20),
-                                width=900,
+                                padding=ft.padding.only(left=10),
+                                width=450,
                             ),
                         ],
                         spacing=0,
@@ -1304,7 +1245,7 @@ class UI:
                 def toggle_height():
                     while True:
                         for container in containers:
-                            new_height = random.randint(50, 200)
+                            new_height = random.randint(25, 100)
                             container.height = new_height
                             page.update()  # 이제 안전하게 업데이트 가능
                         time.sleep(0.5)
@@ -1315,8 +1256,8 @@ class UI:
             containers = [
                 ft.Container(
                     bgcolor=ft.colors.BLACK,
-                    width=45,
-                    height=90,
+                    width=22.5,
+                    height=45,
                     border_radius=ft.border_radius.all(30),
                     animate=ft.Animation(600, "easeInOut"),
                 ) for _ in range(4)
@@ -1364,18 +1305,18 @@ class UI:
                                 ft.Container(
                                     ft.Image(
                                         src=f"{current_working_directory}/assets/images/{images[beverage_final_index]}",
-                                        width=400,
-                                        height=400,
+                                        width=200,
+                                        height=200,
                                         fit=ft.ImageFit.CONTAIN,
                                     ),
-                                    width=300,
-                                    height=400,
+                                    width=150,
+                                    height=200,
                                     border_radius=ft.border_radius.all(10),
                                     shadow=ft.BoxShadow(
                                         blur_radius=10,
                                         offset=ft.Offset(0, 3)
                                     ),
-                                    margin=ft.margin.only(left=40, bottom=20, top=10),
+                                    margin=ft.margin.only(left=20, bottom=10, top=5),
                                     bgcolor='#ffffff',
                                 ),
                                 ft.Container(
@@ -1383,22 +1324,22 @@ class UI:
                                         [
                                             ft.Text(
                                                 names[beverage_final_index],
-                                                size=30,
+                                                size=15,
                                                 text_align=ft.TextAlign.CENTER,
                                                 color=ft.colors.BLACK,
                                                 font_family="NanumGothic"
                                             ),
                                             ft.Text(
                                                 prices[beverage_final_index],
-                                                size=30,
+                                                size=15,
                                                 text_align=ft.TextAlign.CENTER,
                                                 color=ft.colors.BLACK,
                                                 font_family="NanumGothic"
                                             ),
                                         ],
                                     ),
-                                    width=300,
-                                    margin=ft.margin.only(left=50)
+                                    width=150,
+                                    margin=ft.margin.only(left=25)
                                 ),
                                 ft.Container(
                                     ft.Row(
@@ -1410,10 +1351,10 @@ class UI:
                                             ),
                                             ft.Text(
                                                 value=amounts[int(names.index(names[beverage_final_index]))],
-                                                size=20, 
+                                                size=10, 
                                                 text_align=ft.TextAlign.CENTER, 
                                                 color=ft.colors.BLACK,
-                                                width=40,
+                                                width=20,
                                                 font_family="NanumGothic",
                                             ),
                                             ft.IconButton(
@@ -1424,8 +1365,8 @@ class UI:
                                         ],
                                         alignment=ft.MainAxisAlignment.CENTER,
                                     ),
-                                    width=200,
-                                    border=ft.border.all(5, "#999999"),
+                                    width=150,
+                                    border=ft.border.all(2.5, "#999999"),
                                     border_radius=9
                                 ),
                             ],
@@ -1463,19 +1404,19 @@ class UI:
                                             ft.Container(
                                                 ft.Text(
                                                     "Confirm an order.",
-                                                    size=35,
+                                                    size=17.5,
                                                     text_align=ft.TextAlign.CENTER,
                                                     color=ft.colors.BLACK,
                                                     font_family="NanumGothic"
                                                 ),
-                                                ft.margin.only(left=40, right=400, top=100),
+                                                ft.margin.only(left=20, right=200, top=50),
                                             ),
                                             ft.Container(
                                                 ft.Row(
                                                     controls=containers,
                                                 ),
-                                                margin=ft.margin.only(right=60),
-                                                height=300
+                                                margin=ft.margin.only(right=30),
+                                                height=150
                                             ),
                                         ]
                                     ),
@@ -1486,7 +1427,7 @@ class UI:
                                         controls=elements_array,
                                         scroll='always',
                                     ),
-                                    height=1300,
+                                    height=535,
                                     bgcolor=ft.colors.WHITE,
                                 ),
                                 ft.Container(
@@ -1497,14 +1438,14 @@ class UI:
                                                     [
                                                         ft.Text(
                                                             f"Sum:",
-                                                            size=40,
+                                                            size=20,
                                                             color=text_color,
                                                             font_family="NanumGothic",
                                                             weight=text_weight,
                                                         ),
                                                         ft.Text(
                                                             money_sum,
-                                                            size=40,
+                                                            size=20,
                                                             color=text_color,
                                                             font_family="NanumGothic",
                                                             weight=text_weight,
@@ -1512,51 +1453,51 @@ class UI:
                                                     ],
                                                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                                 ),
-                                                width=510,
-                                                height=180,
-                                                border=ft.border.all(5, color='#aba5a0'),
+                                                width=255,
+                                                height=90,
+                                                border=ft.border.all(2.5, color='#aba5a0'),
                                                 border_radius=ft.border_radius.all(20),
-                                                margin=ft.margin.only(left=10),
-                                                padding=ft.padding.only(top=15, bottom=15, left=20, right=20)
+                                                margin=ft.margin.only(left=5),
+                                                padding=ft.padding.only(top=7.5, bottom=7.5, left=10, right=10)
                                             ),
                                             ft.Container(
                                                 ft.Text(
                                                     "메뉴",
-                                                    size=40,
+                                                    size=20,
                                                     color=text_color,
                                                     font_family="NanumGothic",
                                                     weight=text_weight,
                                                 ),
-                                                width=200,
-                                                height=180,
-                                                border=ft.border.all(5, color='#aba5a0'),
+                                                width=100,
+                                                height=90,
+                                                border=ft.border.all(2.5, color='#aba5a0'),
                                                 border_radius=ft.border_radius.all(20),
-                                                margin=ft.margin.only(left=10),
-                                                padding=ft.padding.only(top=55, bottom=15, left=57, right=20),
+                                                margin=ft.margin.only(left=5),
+                                                padding=ft.padding.only(top=27.5, bottom=7.5, left=28.5, right=10),
                                                 on_click=lambda _: page.go('/siosk_order')
                                             ),
                                             ft.Container(
                                                 ft.Text(
                                                     "Payment",
-                                                    size=40,
+                                                    size=20,
                                                     color=text_color,
                                                     font_family="NanumGothic",
                                                     weight=text_weight,
                                                 ),
-                                                padding=ft.padding.only(top=60, left=70),
-                                                width=290,
-                                                height=180,
+                                                padding=ft.padding.only(top=30, left=35),
+                                                width=145,
+                                                height=90,
                                                 border=None,
                                                 border_radius=ft.border_radius.all(20),
-                                                margin=ft.margin.only(left=10),
+                                                margin=ft.margin.only(left=5),
                                                 bgcolor='#E6D5B8',
                                                 on_click=lambda _: connection(names, amounts, prices)
                                             )
                                         ]
                                     ),
-                                    height=200,
+                                    height=100,
                                     alignment=ft.alignment.center,
-                                    margin=ft.margin.only(top=45)
+                                    margin=ft.margin.only(top=22.5)
                                 )
                                 # ft.Container(
                                 #     ft.TextButton("/admininstrator_page", on_click=lambda _: page.go('/admininstrator_page')),
@@ -1565,8 +1506,8 @@ class UI:
                             ],
                             spacing=0
                         ),
-                        width=10000,
-                        height=10000,
+                        width=5000,
+                        height=5000,
                         bgcolor=ft.colors.WHITE
                     )
                 ],
@@ -1602,7 +1543,7 @@ class UI:
                 route="/admininstrator_page",
                 controls=[
                     ft.Container(
-                        height=1000
+                        height=500
                     ),
                     ft.Container(
                         ft.TextButton("/", on_click=lambda _:page.go("/")) # lamba를 쓰는 이유는 즉석 Function을 만들어내기 위함에 있음, 즉시 함수를 생성하여 Onclick 넣어주기
