@@ -153,18 +153,16 @@ class UI:
             if e == 0:
                 data_arrange.clear()
                 data_arrange.append(low_data)
-                print(data_arrange)
-                print("data insulting")
+                print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Data insulting: {data_arrange}")
                 return None
             elif e == 1:
                 try:
-                    print("data getting")
-                    print(data_arrange[0])
+                    print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Data getting: {data_arrange[0]}")
                     return data_arrange[0]
                 except IndexError:
                     return None # 이부분은 개발이 완료되어지면 보안을 위해서 꼭 os._exit(0)으로 변환해주어야함.
                 except Exception as e:
-                    print(e)
+                    print("\033[1;91m" + "ERROR" + "\033[0m" + ":" + f"     Exception detected: {e}")
             else:
                 os._exit(0)
 
@@ -177,7 +175,7 @@ class UI:
                         on_click=lambda _: page.go('/general_order')
                     ),
                     ft.Text(
-                        "일반주문",
+                        "Normal Order",
                         size=20,
                         text_align=ft.TextAlign.CENTER,
                         color=ft.colors.BLACK,
@@ -197,7 +195,7 @@ class UI:
                         on_click=senior_mode
                     ),
                     ft.Text(
-                        "노인주문",
+                        "Senior Order",
                         size=20,
                         text_align=ft.TextAlign.CENTER,
                         color=ft.colors.BLACK,
@@ -307,10 +305,10 @@ class UI:
             )
 
             def start_menu_click(e):
-                print("\nData Initing -> Client Pressed home button")
-                print("------------------------------------------")
-                print(data_arrange)
-                print("------------------------------------------\n")
+                # print("\nData Initing -> Client Pressed home button")
+                # print("------------------------------------------")
+                # print(data_arrange)
+                # print("------------------------------------------\n")
                 MENU.clear()
                 Menu.clear()
                 key_data.clear()
@@ -460,7 +458,8 @@ class UI:
 
             def submit(e): # e 값을 받아서 open_dlg_model을 호출하자 -> Kiosk에 대해서
                 if len(data_arrange) != 0: # data_arrange는 최종적으로 메뉴를 포함하고 있는 배열의 정보이다. 
-                    page.go('/from_general_order') # 이부분은 결제하기를 눌렀을때 나오는 페이지를 뜻함
+                    # page.go('/from_general_order') # 이부분은 결제하기를 눌렀을때 나오는 페이지를 뜻함
+                    pass
                 elif len(data_arrange) == 0:
                     open_dlg_modal(e) # 0개인 경우에는 alert함수 호출
 
@@ -540,7 +539,7 @@ class UI:
                         ),
                         ft.Container(
                             ft.Text(
-                                "결제하기",
+                                "Payment",
                                 size=12.5,
                                 color=text_color,
                                 font_family="NanumGothic",
@@ -643,8 +642,8 @@ class UI:
                                 if lines:
                                     line = lines[-1]
                                     classified, flag = line.split(" | ")
-                                    print("Checker, New string detected: " + classified)
-                                    print("Checker, New flag detected: " + flag)
+                                    # print("Checker, New string detected: " + classified)
+                                    # print("Checker, New flag detected: " + flag)
                                     try:
                                         hint = update_standard(classified=classified, flag=flag)
                                         if hint == False:
@@ -680,16 +679,14 @@ class UI:
                 elif flag == '6':
                     bool_data = classified
                     if bool_data == 'True':
-                        print("Audio selected menu: " + menu_array[0])
-                        print("Audio selected amount: " + amount_array[0])
-                        print("Audio selected bool data: " + bool_data)
-                        print(menu_array, amount_array)
+                        print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Audio selected menu: {menu_array[0]}")
+                        print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Audio selected amount:  {amount_array[0]}")
+                        print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Audio selected bool data:  {bool_data}")
                         automatic_updater(menu=menu_array[0], amount=amount_array[0])
-                        print(menu_array, amount_array)
                         menu_array.clear()
                         amount_array.clear()
                     elif bool_data == 'False':
-                        print("Order Canceled: " + bool_data)
+                        print("\033[33m" + "LOG" + "\033[0m" + ":" + f"     Order Canceled: {bool_data}")
                 elif flag == '7':
                     submit_audio_version()
                     with open('Siosk_en/package/log/logger.log', 'w', encoding='utf-8') as file:
@@ -787,7 +784,7 @@ class UI:
                 for menu in range(len(Menu)):
                     # print(MENU[menu])
                     select_drink = ast.literal_eval(str(Menu[menu])[5:])['value']
-                    print(select_drink)
+                    # print(select_drink)
                     result = str(select_drink).split(' ')[-1][0]
                     fee += int(result)
                 return fee
@@ -797,10 +794,10 @@ class UI:
                 for menu in range(len(Menu)):
                     # print(MENU[menu])
                     select_drink = ast.literal_eval(str(Menu[menu])[5:])['value']
-                    print(select_drink)
+                    # print(select_drink)
                     result = str(select_drink).split(' ')[-1][0]
                     fee += int(result)
-                print(fee)
+                # print(fee)
                 return fee
             
             def check_duplicated():
@@ -940,7 +937,7 @@ class UI:
                         weight=text_weight
                     )
                     Menu.append(order_menu)
-                print(Menu)
+                # print(Menu)
                 total = fee_sum_data_auto()
                 amount_orders = check_duplicated_auto()
                 order_list.clean()
@@ -1214,7 +1211,7 @@ class UI:
                 names, amounts, prices, images = get_picture_link() # Picture Link를 받아오는 함수로써 이름, 양, 이미지 경로를 받아오는 역할을 한다.
                 for beverage_index, beverage_val in enumerate(names):
                     table_format = f"| {names[beverage_index]} | {amounts[beverage_index]} | {prices[beverage_index]} | {images[beverage_index]} |"
-                    print(table_format)
+                    # print(table_format)
                 return names, amounts, prices, images
 
             def get_price_by_name(drink_name, drink_items): # 이름을 활용해서 이미지 경로 배열에서 이미지 경로를 추출
@@ -1300,9 +1297,9 @@ class UI:
             def creating_containers():
                 elements = []
                 def update_amount(e, name, change):
-                    print(name)
-                    print(names.index(name))
-                    print(amounts)
+                    # print(name)
+                    # print(names.index(name))
+                    # print(amounts)
                     amounts[int(names.index(name))] = int(amounts[int(names.index(name))]) + change
                     page.update()
 
@@ -1392,9 +1389,9 @@ class UI:
             text_weight = ft.FontWeight.W_900
 
             def connection(names, amounts, prices):
-                print(names)
-                print(amounts)
-                print(prices)
+                # print(names)
+                # print(amounts)
+                # print(prices)
                 requests.get(f"http://{ip_store[0]}:946", params={'names': str(names), 'amounts': str(amounts), 'prices': str(prices)})
                 MENU.clear()
                 Menu.clear()
