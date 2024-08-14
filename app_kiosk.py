@@ -9,18 +9,27 @@ import re
 import threading
 import requests
 import Siosk_en.package.download as download
-from auto.clear_terminal import clear_terminal
 from Siosk_en.package.TTS import TextToSpeech
 from Siosk_en.package.scan import find_process_by_port_Voice
 from Siosk_en.package.model import API
 from auto.voice import play_wav
+import sys
+import requests
+import os
 
 current_working_directory = os.path.abspath(".") + "/SioskUI_en"
 drinks = ["Coffee", "Smoothe", "Beverage", "Tea", "Ade"]
 ip_store = []
 
+def resource_path(relative_path):
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
 class UI:
     def __init__(self) -> None:
+        print("\033[1;32m" + "INFO" + "\033[0m" + ":" + f"     Establish Connection with Server...")
+        res = requests.get(f"http://127.0.0.1:9460/api?token=SioskKioskFixedTokenVerifyingTokenData&ques=hello", verify=False)
+        print("\033[1;32m" + "INFO" + "\033[0m" + ":" + f"     {res}")
         save_dir = "Siosk_en/package/" # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
         download.download_file(file="conversation_en.json", save_dir=save_dir) # Conversation.json이 있는지 확인하고 없으면 서버에서 다운로드
         self.TextToSpeech = TextToSpeech()
@@ -38,7 +47,7 @@ class UI:
             elif bool_data == False:
                 self.api = API(
                     token="SioskKioskFixedTokenVerifyingTokenData",
-                    url="https://anoask.site"
+                    url="http://127.0.0.1"
                 )
         else:
             self.api = API(
@@ -115,7 +124,7 @@ class UI:
         }
 
         img0 = ft.Image(
-            src=f"{current_working_directory}/assets/images/logo/general.png",
+            src=resource_path(resource_path(f"{current_working_directory}/assets/images/logo/general.png")),
             width=150,
             height=150,
             fit=ft.ImageFit.CONTAIN,
@@ -129,7 +138,7 @@ class UI:
         height_ele = page.window_height
 
         img1 = ft.Image(
-            src=f"{current_working_directory}/assets/images/logo/siosk.png",
+            src=resource_path(resource_path(f"{current_working_directory}/assets/images/logo/siosk.png")),
             width=150,
             height=150,
             fit=ft.ImageFit.CONTAIN,
@@ -238,7 +247,7 @@ class UI:
                 modal=True,
                 bgcolor=ft.colors.WHITE,
                 content=ft.Text(
-                    "메뉴를 적어도 한개 이상 선택해주세요", 
+                    "Please select more than one menu", 
                     color='#55443d',
                     font_family="NanumGothic",
                 ),
@@ -322,8 +331,8 @@ class UI:
                                     ),
                                     ft.Container(
                                         ft.Text(
-                                            "처음으로",
-                                            size=15,
+                                            "Home",
+                                            size=10,
                                             color=text_color,
                                             font_family="NanumGothic",
                                             weight=text_weight
@@ -458,7 +467,7 @@ class UI:
             def create_menu_item(image, text, key):
                 container = ft.Container(
                     ft.Image(
-                        src=f"{current_working_directory}/assets/images/{image}",
+                        src=resource_path(f"{current_working_directory}/assets/images/{image}"),
                         width=180,
                         height=180,
                     ),
@@ -997,7 +1006,7 @@ class UI:
             def create_menu_item(image, text, key):
                 container = ft.Container(
                     ft.Image(
-                        src=f"{current_working_directory}/assets/images/{image}",
+                        src=resource_path(f"{current_working_directory}/assets/images/{image}"),
                         width=375,
                         height=375,
                     ),
@@ -1078,7 +1087,7 @@ class UI:
                                 font_family="NanumGothic",
                                 weight=text_weight,
                             ),
-                            padding=ft.padding.only(top=30, left=14.5),
+                            padding=ft.padding.only(top=30, left=13),
                             width=110,
                             height=160,
                             border=None,
@@ -1304,7 +1313,7 @@ class UI:
                             [
                                 ft.Container(
                                     ft.Image(
-                                        src=f"{current_working_directory}/assets/images/{images[beverage_final_index]}",
+                                        src=resource_path(f"{current_working_directory}/assets/images/{images[beverage_final_index]}"),
                                         width=200,
                                         height=200,
                                         fit=ft.ImageFit.CONTAIN,
@@ -1462,7 +1471,7 @@ class UI:
                                             ),
                                             ft.Container(
                                                 ft.Text(
-                                                    "메뉴",
+                                                    "Menu",
                                                     size=20,
                                                     color=text_color,
                                                     font_family="NanumGothic",
@@ -1473,7 +1482,7 @@ class UI:
                                                 border=ft.border.all(2.5, color='#aba5a0'),
                                                 border_radius=ft.border_radius.all(20),
                                                 margin=ft.margin.only(left=5),
-                                                padding=ft.padding.only(top=27.5, bottom=7.5, left=28.5, right=10),
+                                                padding=ft.padding.only(top=27.5, bottom=7.5, left=20, right=10),
                                                 on_click=lambda _: page.go('/siosk_order')
                                             ),
                                             ft.Container(
@@ -1484,7 +1493,7 @@ class UI:
                                                     font_family="NanumGothic",
                                                     weight=text_weight,
                                                 ),
-                                                padding=ft.padding.only(top=30, left=35),
+                                                padding=ft.padding.only(top=30, left=31),
                                                 width=145,
                                                 height=90,
                                                 border=None,
@@ -1497,7 +1506,7 @@ class UI:
                                     ),
                                     height=100,
                                     alignment=ft.alignment.center,
-                                    margin=ft.margin.only(top=22.5)
+                                    margin=ft.margin.only(top=10, bottom=20)
                                 )
                                 # ft.Container(
                                 #     ft.TextButton("/admininstrator_page", on_click=lambda _: page.go('/admininstrator_page')),
